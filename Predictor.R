@@ -71,8 +71,8 @@ recursive.feature.elimination <- function(data) {
   control <- rfeControl(functions=rfFuncs, method="cv", number=10)
 
   results <- rfe(
-    prepped[,!(colnames(prepped) %in% c('TargetClass'))],
-    prepped$TargetClass,
+    prepped[,!(colnames(prepped) %in% c('shot_made_flag'))],
+    prepped$shot_made_flag,
     sizes = c(1:(ncol(prepped) - 1)),
     rfeControl = control
   )
@@ -84,12 +84,16 @@ recursive.feature.elimination <- function(data) {
 
 sandbox <- function(data) {
   writeLines("\n\nSandbox Mode!!!\n\n")
-  print(summary(data))
-  # recursive.feature.elimination(data)
+
   sampleIndices <- sample(1:nrow(data), 1000)
-  model <- train.model(data[sampleIndices,])
-  evaluate.feature.importance(model)
-  evaluate.model(model, data)
+  data <- data[sampleIndices,]
+
+  recursive.feature.elimination(data)
+
+  # evaluate.feature.importance(model)
+
+  # model <- train.model(data)
+  # evaluate.model(model, data)
 }
 
 production <- function(train.data, test.data) {

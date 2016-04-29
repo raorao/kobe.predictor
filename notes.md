@@ -2,6 +2,9 @@ notes.md
 
 dumb accuracy seems to be around ~60% on shot distance alone.
 
+combined_shot_type won the preliminary rfe. huh???
+followed by shot_distance, shot_zone_basic
+
 some basic variable importance
 
 shot_distance                         100.00

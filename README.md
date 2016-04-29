@@ -11,7 +11,7 @@ predictor of Kobe Bryant's shot success. Solution for the associated [Kaggle Cha
 To generate a sample model, type:
 
 ```sh
-$ Rscript Predictor.R
+$ Rscript Predictor.R sandbox
 ```
 
 %o generate the csv suitable for [upload to Kaggle](https://www.kaggle.com/c/kobe-bryant-shot-selection/details/evaluation), type:

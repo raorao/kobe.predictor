@@ -126,8 +126,10 @@ prepped <- prep.data(data.train)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) == 1 && args[1] == "production") {
-  production(data.train, data.test)
-} else {
-  sandbox(data.train)
+if (length(args) == 1) {
+  if (args[1] == "production") {
+    production(data.train, data.test)
+  } else {
+    sandbox(data.train)
+  }
 }

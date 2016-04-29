@@ -1,5 +1,7 @@
 notes.md
 
+## correlations / importance
+
 dumb accuracy seems to be around ~60% on shot distance alone.
 
 combined_shot_type won the preliminary rfe. huh???
@@ -28,6 +30,31 @@ season1999-00                          10.96
 season2010-11                          10.38
 season2004-05                          10.32
 
+> prop.table(table(prepped$playoffs, prepped$shot_made_flag), 1)
+
+             Miss      Make
+  FALSE 0.5535804 0.4464196
+  TRUE  0.5553486 0.4446514
+
+> prop.table(table(prepped$shot_zone_area, prepped$shot_made_flag),1)
+
+                              Miss       Make
+  Back Court(BC)        0.98611111 0.01388889
+  Center(C)             0.47444415 0.52555585
+  Left Side Center(LC)  0.63882283 0.36117717
+  Left Side(L)          0.60312899 0.39687101
+  Right Side Center(RC) 0.61743281 0.38256719
+  Right Side(R)         0.59834154 0.40165846
+
+> prop.table(table(prepped$away, prepped$shot_made_flag),1)
+
+             Miss      Make
+  FALSE 0.5435322 0.4564678
+  TRUE  0.5635786 0.4364214
+
+playoffs are not a helpful indicator.
+
+## feature engineering
 
 lots of munging that has to happen. specifically, need to grab data from only before a given shot, not after.
 

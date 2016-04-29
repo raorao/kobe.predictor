@@ -14,6 +14,7 @@ prep.data <- function(data) {
     , "shot_zone_area"
     , "shot_type"
     , "combined_shot_type"
+    , "away"
   )
 
   # casting
@@ -24,6 +25,7 @@ prep.data <- function(data) {
   levels(data$playoffs) <- c(F, T)
 
   # engineer features
+  data$away <- grepl('@', data$matchup)
 
   # filter to necessary columns
   data <- data[,(colnames(data) %in% keeps)]

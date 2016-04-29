@@ -1,29 +1,32 @@
 setwd('./')
 require('caret')
-require('mice')
 
 prep.data <- function(data) {
   #clean the data
-  keeps = c( "FIELDS" )
+  keeps = c(
+    "shot_made_flag"
+    , "period"
+    , "season"
+    , "playoffs"
+    , "shot_distance"
+    , "shot_zone_range"
+    , "shot_zone_basic"
+    , "shot_zone_area"
+    , "shot_type"
+    , "combined_shot_type"
+  )
 
-  # column transformations
+  # casting
+  data$shot_made_flag <- as.factor(data$shot_made_flag)
+  levels(data$shot_made_flag) <- c("Miss", "Make")
+
+  data$playoffs <- as.factor(data$playoffs)
+  levels(data$playoffs) <- c(F, T)
 
   # engineer features
 
   # filter to necessary columns
   data <- data[,(colnames(data) %in% keeps)]
-
-  # missing value munging
-  data <-
-    complete(
-      mice(
-        data,
-        m = 5,
-        meth = 'pmm',
-        printFlag = F
-      )
-      , 1
-    )
 
   data
 }
@@ -71,6 +74,7 @@ recursive.feature.elimination <- function(data) {
 }
 
 sandbox <- function(data) {
+  data <- prep.data(data)
   writeLines("\n\nSandbox Mode!!!\n\n")
   print(summary(data))
   # recursive.feature.eli mination(data)
@@ -100,6 +104,9 @@ production <- function(train.data, test.data) {
 data       <- read.csv('data.csv', header = T)
 data.train <- data[!is.na(data['shot_made_flag']), ]
 data.test  <- data[is.na(data['shot_made_flag']), ]
+
+# useful for R Studio
+prepped <- prep.data(data.train)
 
 args <- commandArgs(trailingOnly = TRUE)
 

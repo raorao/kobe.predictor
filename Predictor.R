@@ -24,6 +24,8 @@ prep.data <- function(data) {
   data$playoffs <- as.factor(data$playoffs)
   levels(data$playoffs) <- c(F, T)
 
+  data$shot_distance <- log10(data$shot_distance + 1)
+
   # engineer features
   data$away <- grepl('@', data$matchup)
 

@@ -4,6 +4,8 @@ library(doMC)
 registerDoMC(cores = 5)
 
 prep.data <- function(data) {
+  writeLines("Prepping Data\n")
+
   #clean the data
   keeps = c(
     "shot_made_flag"
@@ -38,12 +40,14 @@ prep.data <- function(data) {
 }
 
 evaluate.model <- function(model, test.data) {
+  writeLines("Evaluating Model\n")
   predictions <- predict(model, prep.data(test.data))
   print(confusionMatrix(model))
   print(model$results)
 }
 
 train.model <- function(train.data) {
+  writeLines("Training Model\n")
   train.control <- trainControl(
     method = "cv",
     number = 10,
@@ -53,27 +57,22 @@ train.model <- function(train.data) {
   train(
     shot_made_flag ~ .,
     data = prep.data(train.data),
-    trControl=train.control,
+    trControl = train.control,
     method="rf"
   )
 }
 
 evaluate.feature.importance <- function(model) {
-  # estimate variable importance
+  writeLines("Evaluating Feature Importance\n")
   importance <- varImp(model, scale=T)
-  # summarize importance
   print(importance)
-  # plot importance
-  plot(importance)
 }
 
+# see: http://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
 recursive.feature.elimination <- function(data) {
-  # see: http://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
-
-  writeLines("\n\nStarting Feature Selection\n\n")
+  writeLines("Starting Feature Selection\n")
 
   prepped <- prep.data(data)
-
   control <- rfeControl(functions=rfFuncs, method="cv", number=10)
 
   results <- rfe(
@@ -84,26 +83,31 @@ recursive.feature.elimination <- function(data) {
   )
 
   print(results)
-
   print(predictors(results))
 }
 
-sandbox <- function(data) {
-  writeLines("\n\nSandbox Mode!!!\n\n")
+sandbox <- function(data, cmd) {
+  writeLines("Sandbox Mode!!!\n")
 
   sampleIndices <- sample(1:nrow(data), 1000)
   data <- data[sampleIndices,]
 
-  recursive.feature.elimination(data)
+  if (cmd == "rfe") {
+    recursive.feature.elimination(data)
+  } else if (cmd == "varimp") {
+    model <- train.model(data)
+    evaluate.feature.importance(model)
+  } else if (cmd == "eval"){
+    model <- train.model(data)
+    evaluate.model(model, data)
+  } else {
+    writeLines("invalid command provided. see README for options.\n")
+  }
 
-  # evaluate.feature.importance(model)
-
-  # model <- train.model(data)
-  # evaluate.model(model, data)
 }
 
 production <- function(train.data, test.data) {
-  writeLines("\n\nProduction Mode !!!\n\n")
+  writeLines("Production Mode !!!\n")
 
   data.test  <- prep.data(test.data)
   model      <- train.model(train.data)
@@ -116,7 +120,7 @@ production <- function(train.data, test.data) {
 
   # clean up output file
 
-  writeLines('\n\nOutput is ready at production.csv\n\n')
+  writeLines('\nOutput is ready at production.csv\n')
   write.csv(output.file, file = 'production.csv', row.names = F)
 }
 
@@ -134,6 +138,6 @@ if (length(args) == 1) {
   if (args[1] == "production") {
     production(data.train, data.test)
   } else {
-    sandbox(data.train)
+    sandbox(data.train, args[1])
   }
 }

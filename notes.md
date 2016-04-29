@@ -1,5 +1,30 @@
 notes.md
 
+dumb accuracy seems to be around ~60% on shot distance alone.
+
+some basic variable importance
+
+shot_distance                         100.00
+combined_shot_typeDunk                 62.11
+combined_shot_typeJump Shot            49.58
+period                                 38.22
+shot_zone_basicRestricted Area         37.25
+shot_type3PT Field Goal                28.14
+shot_zone_range24+ ft.                 20.94
+shot_zone_rangeLess Than 8 ft.         19.39
+shot_zone_areaCenter(C)                17.66
+combined_shot_typeLayup                17.12
+shot_zone_basicMid-Range               16.93
+season2005-06                          16.46
+shot_zone_basicIn The Paint (Non-RA)   15.96
+season2015-16                          14.91
+playoffsTRUE                           12.39
+season2007-08                          12.28
+season2006-07                          11.18
+season1999-00                          10.96
+season2010-11                          10.38
+season2004-05                          10.32
+
 
 lots of munging that has to happen. specifically, need to grab data from only before a given shot, not after.
 

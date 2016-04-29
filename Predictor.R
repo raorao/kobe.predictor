@@ -48,8 +48,17 @@ train.model <- function(train.data) {
     shot_made_flag ~ .,
     data = prep.data(train.data),
     trControl=train.control,
-    method="ranger"
+    method="rf"
   )
+}
+
+evaluate.feature.importance <- function(model) {
+  # estimate variable importance
+  importance <- varImp(model, scale=T)
+  # summarize importance
+  print(importance)
+  # plot importance
+  plot(importance)
 }
 
 recursive.feature.elimination <- function(data) {
@@ -74,12 +83,13 @@ recursive.feature.elimination <- function(data) {
 }
 
 sandbox <- function(data) {
-  data <- prep.data(data)
   writeLines("\n\nSandbox Mode!!!\n\n")
   print(summary(data))
-  # recursive.feature.eli mination(data)
-  # model <- train.model(data)
-  # evaluate.model(model, data)
+  # recursive.feature.elimination(data)
+  sampleIndices <- sample(1:nrow(data), 1000)
+  model <- train.model(data[sampleIndices,])
+  evaluate.feature.importance(model)
+  evaluate.model(model, data)
 }
 
 production <- function(train.data, test.data) {

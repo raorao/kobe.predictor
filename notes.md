@@ -52,7 +52,41 @@ season2004-05                          10.32
   FALSE 0.5435322 0.4564678
   TRUE  0.5635786 0.4364214
 
+> prop.table(table(data.train$combined_shot_type, data.train$shot_made_flag),1)
+
+                 Miss      Make
+  Bank Shot 0.2083333 0.7916667
+  Dunk      0.0719697 0.9280303
+  Hook Shot 0.4645669 0.5354331
+  Jump Shot 0.6089295 0.3910705
+  Layup     0.4349073 0.5650927
+  Tip Shot  0.6513158 0.3486842
+
+> prop.table(table(data.train$shot_zone_basic, data.train$shot_made_flag),1)
+
+                               Miss      Make
+  Above the Break 3     0.67076271 0.32923729
+  Backcourt             0.98333333 0.01666667
+  In The Paint (Non-RA) 0.54561856 0.45438144
+  Left Corner 3         0.62916667 0.37083333
+  Mid-Range             0.59371439 0.40628561
+  Restricted Area       0.38199595 0.61800405
+  Right Corner 3        0.66066066 0.33933934
+
+> prop.table(table(prepped$shot_zone_range, prepped$shot_made_flag),1)
+
+                        Miss       Make
+  16-24 ft.       0.59823368 0.40176632
+  24+ ft.         0.66748722 0.33251278
+  8-16 ft.        0.56451613 0.43548387
+  Back Court Shot 0.98611111 0.01388889
+  Less Than 8 ft. 0.42688049 0.57311951
+
+take aways:
 playoffs are not a helpful indicator.
+away seems like a meaningful indicator
+shot_type is described by shot_zone_basic
+shot_zone_range is described by shot_distance
 
 ## feature engineering
 

@@ -5,14 +5,14 @@ prep.data <- function(data) {
   #clean the data
   keeps = c(
     "shot_made_flag"
-    , "period"
+    # , "period"
     , "season"
-    , "playoffs"
+    # , "playoffs"
     , "shot_distance"
-    , "shot_zone_range"
+    # , "shot_zone_range"
     , "shot_zone_basic"
     , "shot_zone_area"
-    , "shot_type"
+    # , "shot_type"
     , "combined_shot_type"
     , "away"
   )

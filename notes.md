@@ -135,5 +135,7 @@ season -- necessary for engineered features
 target:
 shot_made_flag
 
+### etc
 
-let's do some descriptive stats!!!
+with single core == 55 seconds.
+with five cores == 17 seconds.

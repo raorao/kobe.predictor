@@ -1,5 +1,7 @@
 setwd('./')
 require('caret')
+library(doMC)
+registerDoMC(cores = 5)
 
 prep.data <- function(data) {
   #clean the data

@@ -139,3 +139,8 @@ shot_made_flag
 
 with single core == 55 seconds.
 with five cores == 17 seconds.
+
+we need time series! this is going to get complicated.
+
+http://stackoverflow.com/questions/19835587/r-transform-data-frame-to-time-series
+http://faculty.washington.edu/ezivot/econ424/Working%20with%20Time%20Series%20Data%20in%20R.pdf

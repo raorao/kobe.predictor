@@ -8,14 +8,15 @@ prep.data <- function(data) {
 
   #clean the data
   keeps = c(
+    "shot_id",
     "shot_made_flag"
     # , "period"
-    , "season"
+    # , "season"
     # , "playoffs"
     , "shot_distance"
     # , "shot_zone_range"
     , "shot_zone_basic"
-    , "shot_zone_area"
+    # , "shot_zone_area"
     # , "shot_type"
     , "combined_shot_type"
     , "away"
@@ -41,7 +42,7 @@ prep.data <- function(data) {
 
 evaluate.model <- function(model, test.data) {
   writeLines("Evaluating Model\n")
-  predictions <- predict(model, prep.data(test.data))
+  predictions <- predict(model, test.data)
   print(confusionMatrix(model))
   print(model$results)
 }
@@ -55,8 +56,8 @@ train.model <- function(train.data) {
   )
 
   train(
-    shot_made_flag ~ .,
-    data = prep.data(train.data),
+    shot_made_flag ~ . -shot_id,
+    data = train.data,
     trControl = train.control,
     method="rf"
   )
@@ -72,13 +73,12 @@ evaluate.feature.importance <- function(model) {
 recursive.feature.elimination <- function(data) {
   writeLines("Starting Feature Selection\n")
 
-  prepped <- prep.data(data)
   control <- rfeControl(functions=rfFuncs, method="cv", number=10)
 
   results <- rfe(
-    prepped[,!(colnames(prepped) %in% c('shot_made_flag'))],
-    prepped$shot_made_flag,
-    sizes = c(1:(ncol(prepped) - 1)),
+    data[,!(colnames(data) %in% c('shot_made_flag', 'shot_id'))],
+    data$shot_made_flag,
+    sizes = c(1:(ncol(data) - 2)),
     rfeControl = control
   )
 
@@ -90,35 +90,37 @@ sandbox <- function(data, cmd) {
   writeLines("Sandbox Mode!!!\n")
 
   sampleIndices <- sample(1:nrow(data), 1000)
-  data <- data[sampleIndices,]
+  prepped <- prep.data(data[sampleIndices,])
 
   if (cmd == "rfe") {
-    recursive.feature.elimination(data)
+    recursive.feature.elimination(prepped)
   } else if (cmd == "varimp") {
-    model <- train.model(data)
+    model <- train.model(prepped)
     evaluate.feature.importance(model)
   } else if (cmd == "eval"){
-    model <- train.model(data)
-    evaluate.model(model, data)
+    model <- train.model(prepped)
+    evaluate.model(model, prepped)
   } else {
     writeLines("invalid command provided. see README for options.\n")
   }
 
 }
 
-production <- function(train.data, test.data) {
+production <- function(data) {
   writeLines("Production Mode !!!\n")
 
-  data.test  <- prep.data(test.data)
+  data       <- prep.data(data)
+  train.data <- data[!is.na(data['shot_made_flag']), ]
+  test.data  <- data[is.na(data['shot_made_flag']), ]
   model      <- train.model(train.data)
 
   evaluate.model(model, train.data)
 
-  predictions <- predict(model, data.test)
+  predictions <- predict(model, test.data)
 
   output.file <- as.data.frame(as.matrix(predictions))
-
-  # clean up output file
+  output.file$shot_id <- test.data$shot_id
+  levels(output.file$shot_made_flag) <- c(0, 1)
 
   writeLines('\nOutput is ready at production.csv\n')
   write.csv(output.file, file = 'production.csv', row.names = F)
@@ -136,7 +138,7 @@ args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) == 1) {
   if (args[1] == "production") {
-    production(data.train, data.test)
+    production(data)
   } else {
     sandbox(data.train, args[1])
   }
